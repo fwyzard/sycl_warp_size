@@ -21,22 +21,15 @@
     defined(__SYCL_TARGET_INTEL_GPU_ACM_G11__) || /* ... */ \
     defined(__SYCL_TARGET_INTEL_GPU_ACM_G12__)    /* ... */
 
-#define SYCL_HAS_WARP_SIZE_8
-#define SYCL_HAS_WARP_SIZE_16
-#define SYCL_HAS_WARP_SIZE_32
+#define SYCL_SUBGROUP_SIZE (8 | 16 | 32)
 
 #elif defined(__SYCL_TARGET_INTEL_GPU_PVC__)  /* ... */
 
-#define SYCL_HAS_WARP_SIZE_16
-#define SYCL_HAS_WARP_SIZE_32
+#define SYCL_SUBGROUP_SIZE (16 | 32)
 
 #elif defined(__SYCL_TARGET_INTEL_X86_64__) /* ... */
 
-#define SYCL_HAS_WARP_SIZE_4
-#define SYCL_HAS_WARP_SIZE_8
-#define SYCL_HAS_WARP_SIZE_16
-#define SYCL_HAS_WARP_SIZE_32
-#define SYCL_HAS_WARP_SIZE_64
+#define SYCL_SUBGROUP_SIZE (4 | 8 | 16 | 32 | 64)
 
 #elif defined(__SYCL_TARGET_NVIDIA_GPU_SM_50__) || /* ... */ \
     defined(__SYCL_TARGET_NVIDIA_GPU_SM_52__) ||   /* ... */ \
@@ -53,7 +46,7 @@
     defined(__SYCL_TARGET_NVIDIA_GPU_SM_89__) ||   /* ... */ \
     defined(__SYCL_TARGET_NVIDIA_GPU_SM_90__)
 
-#define SYCL_HAS_WARP_SIZE_32
+#define SYCL_SUBGROUP_SIZE 32
 
 #elif defined(__SYCL_TARGET_AMD_GPU_GFX700__) || /* ... */ \
     defined(__SYCL_TARGET_AMD_GPU_GFX701__) ||   /* ... */ \
@@ -70,7 +63,7 @@
     defined(__SYCL_TARGET_AMD_GPU_GFX908__) ||   /* ... */ \
     defined(__SYCL_TARGET_AMD_GPU_GFX90A__)      /* ... */
 
-#define SYCL_HAS_WARP_SIZE_64
+#define SYCL_SUBGROUP_SIZE 64
 
 #elif defined(__SYCL_TARGET_AMD_GPU_GFX1010__) || /* ... */ \
     defined(__SYCL_TARGET_AMD_GPU_GFX1011__) ||   /* ... */ \
@@ -81,7 +74,11 @@
     defined(__SYCL_TARGET_AMD_GPU_GFX1032__) ||   /* ... */ \
     defined(__SYCL_TARGET_AMD_GPU_GFX1034__)      /* ... */
 
-#define SYCL_HAS_WARP_SIZE_32
+#define SYCL_SUBGROUP_SIZE 32
+
+#else
+
+#define SYCL_SUBGROUP_SIZE 0
 
 #endif
 

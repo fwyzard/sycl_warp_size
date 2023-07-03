@@ -2,8 +2,8 @@
 
 #include <sycl/sycl.hpp>
 
-#include "warpsize.h"
 #include "kernel.h"
+#include "sycl_subgroup_size.h"
 
 int main() {
   auto platforms = sycl::platform::get_platforms();
@@ -25,27 +25,27 @@ int main() {
         queue.submit([&](sycl::handler& cgh) {
           cgh.parallel_for(sycl::nd_range<1>(1, 1), [=](sycl::nd_item<1> item) {
             *supported = true;
-#if defined SYCL_HAS_WARP_SIZE_4
+#if (SYCL_SUBGROUP_SIZE & 4)
             subgroups[4] = true;
 #else
             subgroups[4] = false;
 #endif
-#if defined SYCL_HAS_WARP_SIZE_8
+#if (SYCL_SUBGROUP_SIZE & 8)
             subgroups[8] = true;
 #else
             subgroups[8] = false;
 #endif
-#if defined SYCL_HAS_WARP_SIZE_16
+#if (SYCL_SUBGROUP_SIZE & 16)
             subgroups[16] = true;
 #else
             subgroups[16] = false;
 #endif
-#if defined SYCL_HAS_WARP_SIZE_32
+#if (SYCL_SUBGROUP_SIZE & 32)
             subgroups[32] = true;
 #else
             subgroups[32] = false;
 #endif
-#if defined SYCL_HAS_WARP_SIZE_64
+#if (SYCL_SUBGROUP_SIZE & 64)
             subgroups[64] = true;
 #else
             subgroups[64] = false;
@@ -92,7 +92,7 @@ int main() {
           queue.submit([&](sycl::handler& cgh) {
             cgh.parallel_for(
               sycl::nd_range<1>(blocks * threads, threads),
-#if defined SYCL_HAS_WARP_SIZE_4
+#if (SYCL_SUBGROUP_SIZE & 4)
               [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(4)]] {
                 do_some_work<4>(item, expected, actual);
               }
@@ -106,7 +106,7 @@ int main() {
           queue.submit([&](sycl::handler& cgh) {
             cgh.parallel_for(
               sycl::nd_range<1>(blocks * threads, threads),
-#if defined SYCL_HAS_WARP_SIZE_8
+#if (SYCL_SUBGROUP_SIZE & 8)
               [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(8)]] {
                 do_some_work<8>(item, expected, actual);
               }
@@ -120,7 +120,7 @@ int main() {
           queue.submit([&](sycl::handler& cgh) {
             cgh.parallel_for(
               sycl::nd_range<1>(blocks * threads, threads),
-#if defined SYCL_HAS_WARP_SIZE_16
+#if (SYCL_SUBGROUP_SIZE & 16)
               [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(16)]] {
                 do_some_work<16>(item, expected, actual);
               }
@@ -134,7 +134,7 @@ int main() {
           queue.submit([&](sycl::handler& cgh) {
             cgh.parallel_for(
               sycl::nd_range<1>(blocks * threads, threads),
-#if defined SYCL_HAS_WARP_SIZE_32
+#if (SYCL_SUBGROUP_SIZE & 32)
               [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(32)]] {
                 do_some_work<32>(item, expected, actual);
               }
@@ -148,7 +148,7 @@ int main() {
           queue.submit([&](sycl::handler& cgh) {
             cgh.parallel_for(
               sycl::nd_range<1>(blocks * threads, threads),
-#if defined SYCL_HAS_WARP_SIZE_64
+#if (SYCL_SUBGROUP_SIZE & 64)
               [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(64)]] {
                 do_some_work<64>(item, expected, actual);
               }
