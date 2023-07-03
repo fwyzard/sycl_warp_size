@@ -1,3 +1,5 @@
+#ifdef __SYCL_DEVICE_ONLY__
+
 #if defined(__SYCL_TARGET_INTEL_GPU_BDW__) ||     /* ... */ \
     defined(__SYCL_TARGET_INTEL_GPU_SKL__) ||     /* ... */ \
     defined(__SYCL_TARGET_INTEL_GPU_KBL__) ||     /* ... */ \
@@ -78,3 +80,5 @@
 #define SYCL_HAS_WARP_SIZE_32
 
 #endif
+
+#endif  // __SYCL_DEVICE_ONLY__
