@@ -19,10 +19,14 @@
     defined(__SYCL_TARGET_INTEL_GPU_DG1__) ||     /* ... */ \
     defined(__SYCL_TARGET_INTEL_GPU_ACM_G10__) || /* ... */ \
     defined(__SYCL_TARGET_INTEL_GPU_ACM_G11__) || /* ... */ \
-    defined(__SYCL_TARGET_INTEL_GPU_ACM_G12__) || /* ... */ \
-    defined(__SYCL_TARGET_INTEL_GPU_PVC__)        /* ... */
+    defined(__SYCL_TARGET_INTEL_GPU_ACM_G12__)    /* ... */
 
 #define SYCL_HAS_WARP_SIZE_8
+#define SYCL_HAS_WARP_SIZE_16
+#define SYCL_HAS_WARP_SIZE_32
+
+#elif defined(__SYCL_TARGET_INTEL_GPU_PVC__)  /* ... */
+
 #define SYCL_HAS_WARP_SIZE_16
 #define SYCL_HAS_WARP_SIZE_32
 
