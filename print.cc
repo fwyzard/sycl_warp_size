@@ -75,36 +75,36 @@ int main() {
         int threads = 1;
         int blocks = 1;
         queue.submit([&](sycl::handler& cgh) {
-//#if defined SYCL_HAS_WARP_SIZE_4
+#if defined SYCL_HAS_WARP_SIZE_4
           if (size == 4) {
             std::cout << "      sub-group size of 4 is being tested\n";
             cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(4)]] { do_some_work<4>(item); });
           } else
-//#endif
-//#if defined SYCL_HAS_WARP_SIZE_8
+#endif
+#if defined SYCL_HAS_WARP_SIZE_8
               if (size == 8) {
             std::cout << "      sub-group size of 8 is being tested\n";
             cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(8)]] { do_some_work<8>(item); });
           } else
-//#endif
-//#if defined SYCL_HAS_WARP_SIZE_16
+#endif
+#if defined SYCL_HAS_WARP_SIZE_16
               if (size == 16) {
             std::cout << "      sub-group size of 16 is being tested\n";
             cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(16)]] { do_some_work<16>(item); });
           } else
-//#endif
-//#if defined SYCL_HAS_WARP_SIZE_32
+#endif
+#if defined SYCL_HAS_WARP_SIZE_32
               if (size == 32) {
             std::cout << "      sub-group size of 32 is being tested\n";
             cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(32)]] { do_some_work<32>(item); });
           } else
-//#endif
-//#if defined SYCL_HAS_WARP_SIZE_64
+#endif
+#if defined SYCL_HAS_WARP_SIZE_64
               if (size == 64) {
             std::cout << "      sub-group size of 64 is being tested\n";
             cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(64)]] { do_some_work<64>(item); });
           } else
-//#endif
+#endif
             std::cout << "      unsupported sub-group size\n";
         }).wait();
       }
