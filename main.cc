@@ -27,24 +27,34 @@ int main() {
             *supported = true;
 #if defined SYCL_HAS_WARP_SIZE_4
             subgroups[4] = true;
+#else
+            subgroups[4] = false;
 #endif
 #if defined SYCL_HAS_WARP_SIZE_8
             subgroups[8] = true;
+#else
+            subgroups[8] = false;
 #endif
 #if defined SYCL_HAS_WARP_SIZE_16
             subgroups[16] = true;
+#else
+            subgroups[16] = false;
 #endif
 #if defined SYCL_HAS_WARP_SIZE_32
             subgroups[32] = true;
+#else
+            subgroups[32] = false;
 #endif
 #if defined SYCL_HAS_WARP_SIZE_64
             subgroups[64] = true;
+#else
+            subgroups[64] = false;
 #endif
           });
         }).wait();
       } catch(...) {}
       if (not *supported) {
-        std::cout << "  this device is not supported by this binary.\n\n";
+        std::cout << "  this device is not supported by this binary.\n";
         continue;
       } else {
         std::cout << "  sub-group sizes supported by the compiler: ";
@@ -78,41 +88,82 @@ int main() {
         int blocks = 1;
         *expected = 0;
         *actual = 0;
-        queue.submit([&](sycl::handler& cgh) {
+        if (size == 4) {
+          queue.submit([&](sycl::handler& cgh) {
+            cgh.parallel_for(
+              sycl::nd_range<1>(blocks * threads, threads),
 #if defined SYCL_HAS_WARP_SIZE_4
-          if (size == 4) {
-            std::cout << "      sub-group size of 4 is being tested\n";
-            cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(4)]] { do_some_work<4>(item, expected, actual); });
-          } else
+              [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(4)]] {
+                do_some_work<4>(item, expected, actual);
+              }
+#else
+              [expected, actual](sycl::nd_item<1> item) {}
 #endif
+            );
+          }).wait();
+        }
+        if (size == 8) {
+          queue.submit([&](sycl::handler& cgh) {
+            cgh.parallel_for(
+              sycl::nd_range<1>(blocks * threads, threads),
 #if defined SYCL_HAS_WARP_SIZE_8
-          if (size == 8) {
-            std::cout << "      sub-group size of 8 is being tested\n";
-            cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(8)]] { do_some_work<8>(item, expected, actual); });
-          } else
+              [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(8)]] {
+                do_some_work<8>(item, expected, actual);
+              }
+#else
+              [expected, actual](sycl::nd_item<1> item) {}
 #endif
+            );
+          }).wait();
+        }
+        if (size == 16) {
+          queue.submit([&](sycl::handler& cgh) {
+            cgh.parallel_for(
+              sycl::nd_range<1>(blocks * threads, threads),
 #if defined SYCL_HAS_WARP_SIZE_16
-          if (size == 16) {
-            std::cout << "      sub-group size of 16 is being tested\n";
-            cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(16)]] { do_some_work<16>(item, expected, actual); });
-          } else
+              [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(16)]] {
+                do_some_work<16>(item, expected, actual);
+              }
+#else
+              [expected, actual](sycl::nd_item<1> item) {}
 #endif
+            );
+          }).wait();
+        }
+        if (size == 32) {
+          queue.submit([&](sycl::handler& cgh) {
+            cgh.parallel_for(
+              sycl::nd_range<1>(blocks * threads, threads),
 #if defined SYCL_HAS_WARP_SIZE_32
-          if (size == 32) {
-            std::cout << "      sub-group size of 32 is being tested\n";
-            cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(32)]] { do_some_work<32>(item, expected, actual); });
-          } else
+              [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(32)]] {
+                do_some_work<32>(item, expected, actual);
+              }
+#else
+              [expected, actual](sycl::nd_item<1> item) {}
 #endif
+            );
+          }).wait();
+        }
+        if (size == 64) {
+          queue.submit([&](sycl::handler& cgh) {
+            cgh.parallel_for(
+              sycl::nd_range<1>(blocks * threads, threads),
 #if defined SYCL_HAS_WARP_SIZE_64
-          if (size == 64) {
-            std::cout << "      sub-group size of 64 is being tested\n";
-            cgh.parallel_for(sycl::nd_range<1>(blocks * threads, threads), [=](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(64)]] { do_some_work<64>(item, expected, actual); });
-          } else
+              [expected, actual](sycl::nd_item<1> item) [[intel::reqd_sub_group_size(64)]] {
+                do_some_work<64>(item, expected, actual);
+              }
+#else
+              [expected, actual](sycl::nd_item<1> item) {}
 #endif
-            std::cout << "      unsupported sub-group size\n";
-        }).wait();
-        std::cout << "      the expected subgroup size is " << *expected << '\n';
-        std::cout << "      the actual subgroup size is " << *actual << '\n';
+            );
+          }).wait();
+        }
+        if (*actual) {
+          std::cout << "      the expected subgroup size is " << *expected << '\n';
+          std::cout << "      the actual subgroup size is " << *actual << '\n';
+        } else {
+          std::cout << "      unsupported sub-group size\n";
+        }
       }
 
       sycl::free(expected, queue);
@@ -120,5 +171,4 @@ int main() {
     }
     std::cout << '\n';
   }
-  std::cout << '\n';
 }
