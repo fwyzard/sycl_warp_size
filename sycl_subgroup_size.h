@@ -1,3 +1,6 @@
+#ifndef SYCL_SUBGROUP_SIZE_H
+#define SYCL_SUBGROUP_SIZE_H
+
 #ifdef __SYCL_DEVICE_ONLY__
 
 #if defined(__SYCL_TARGET_INTEL_GPU_BDW__) ||     /* ... */ \
@@ -76,10 +79,12 @@
 
 #define SYCL_SUBGROUP_SIZE 32
 
-#else
+#else  // __SYCL_TARGET_*
 
 #define SYCL_SUBGROUP_SIZE 0
 
-#endif
+#endif  // __SYCL_TARGET_*
 
 #endif  // __SYCL_DEVICE_ONLY__
+
+#endif  // SYCL_SUBGROUP_SIZE_H
