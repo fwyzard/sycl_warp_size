@@ -64,8 +64,9 @@ int main()
                         })
                     .wait();
             }
-            catch(...)
+            catch(std::exception const& e)
             {
+                std::cerr << "  " << e.what() << '\n';
             }
             if(not *supported)
             {
@@ -84,6 +85,9 @@ int main()
                         std::cout << i;
                         first = false;
                     }
+                if (first) {
+                  std::cout << "(undefined)";
+                }
                 std::cout << '\n';
             }
 
@@ -104,9 +108,9 @@ int main()
             std::cout << "\n      test automatic sub-group size\n";
             *expected = 0;
             *actual = 0;
-            launch_kernel<0>(queue, do_some_work<0>{}, expected, actual);
-            std::cout << "      the expected subgroup size is " << *expected << '\n';
-            std::cout << "      the actual subgroup size is " << *actual << '\n';
+
+            launch_kernel<0>(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, expected, actual).wait();
+            std::cout << "      the automatic sub-group size is " << *actual << '\n';
 
             for(int size : sizes)
             {
@@ -115,28 +119,29 @@ int main()
                 *actual = 0;
                 if(size == 4)
                 {
-                    launch_kernel<4>(queue, do_some_work<4>{}, expected, actual);
+                    launch_kernel<4>(queue, sycl::nd_range<1>(1, 1), do_some_work<4>{}, expected, actual).wait();
                 }
                 if(size == 8)
                 {
-                    launch_kernel<8>(queue, do_some_work<8>{}, expected, actual);
+                    launch_kernel<8>(queue, sycl::nd_range<1>(1, 1), do_some_work<8>{}, expected, actual).wait();
                 }
                 if(size == 16)
                 {
-                    launch_kernel<16>(queue, do_some_work<16>{}, expected, actual);
+                    launch_kernel<16>(queue, sycl::nd_range<1>(1, 1), do_some_work<16>{}, expected, actual).wait();
                 }
                 if(size == 32)
                 {
-                    launch_kernel<32>(queue, do_some_work<32>{}, expected, actual);
+                    launch_kernel<32>(queue, sycl::nd_range<1>(1, 1), do_some_work<32>{}, expected, actual).wait();
                 }
                 if(size == 64)
                 {
-                    launch_kernel<64>(queue, do_some_work<64>{}, expected, actual);
+                    launch_kernel<64>(queue, sycl::nd_range<1>(1, 1), do_some_work<64>{}, expected, actual).wait();
                 }
+
                 if(*actual)
                 {
-                    std::cout << "      the expected subgroup size is " << *expected << '\n';
-                    std::cout << "      the actual subgroup size is " << *actual << '\n';
+                    std::cout << "      the expected sub-group size is " << *expected << '\n';
+                    std::cout << "      the actual sub-group size is " << *actual << '\n';
                 }
                 else
                 {
