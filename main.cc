@@ -1,9 +1,10 @@
-#include "kernel.h"
-#include "sycl_subgroup_size.h"
+#include <iostream>
 
 #include <sycl/sycl.hpp>
 
-#include <cstdio>
+#include "kernel.h"
+#include "launch.h"
+#include "sycl_subgroup_size.h"
 
 int main()
 {
@@ -91,7 +92,7 @@ int main()
             std::cout << '\n';
 
             std::cout << "\n    test automatic sub-group size\n";
-            launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, supported).wait();
+            launch(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, supported).wait();
             //std::cout << "    the automatic sub-group size is " << *actual << '\n';
 
             for(int size : sizes)
@@ -101,23 +102,23 @@ int main()
                 std::cout << "\n    test sub-group of " << size << " elements\n";
                 if(size == 4)
                 {
-                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<4>{}, supported).wait();
+                    launch(queue, sycl::nd_range<1>(1, 1), do_some_work<4>{}, supported).wait();
                 }
                 if(size == 8)
                 {
-                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<8>{}, supported).wait();
+                    launch(queue, sycl::nd_range<1>(1, 1), do_some_work<8>{}, supported).wait();
                 }
                 if(size == 16)
                 {
-                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<16>{}, supported).wait();
+                    launch(queue, sycl::nd_range<1>(1, 1), do_some_work<16>{}, supported).wait();
                 }
                 if(size == 32)
                 {
-                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<32>{}, supported).wait();
+                    launch(queue, sycl::nd_range<1>(1, 1), do_some_work<32>{}, supported).wait();
                 }
                 if(size == 64)
                 {
-                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<64>{}, supported).wait();
+                    launch(queue, sycl::nd_range<1>(1, 1), do_some_work<64>{}, supported).wait();
                 }
 
                 if(not *supported)
