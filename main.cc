@@ -82,9 +82,6 @@ int main()
                 std::cout << '\n';
             }
 
-            sycl::free(supported, queue);
-            sycl::free(subgroups, queue);
-
             auto sizes = device.get_info<sycl::info::device::sub_group_sizes>();
             std::cout << "  sub-group sizes supported by the device: " << sizes[0];
             for(int i = 1; i < sizes.size(); ++i)
@@ -93,54 +90,44 @@ int main()
             }
             std::cout << '\n';
 
-            std::size_t* expected = sycl::malloc_host<std::size_t>(1, queue);
-            std::size_t* actual = sycl::malloc_host<std::size_t>(1, queue);
-
             std::cout << "\n    test automatic sub-group size\n";
-            *expected = 0;
-            *actual = 0;
-            launch_kernel<0>(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, expected, actual).wait();
-            std::cout << "    the automatic sub-group size is " << *actual << '\n';
+            launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, supported).wait();
+            //std::cout << "    the automatic sub-group size is " << *actual << '\n';
 
             for(int size : sizes)
             {
+                *supported = false;
+
                 std::cout << "\n    test sub-group of " << size << " elements\n";
-                *expected = 0;
-                *actual = 0;
                 if(size == 4)
                 {
-                    launch_kernel<4>(queue, sycl::nd_range<1>(1, 1), do_some_work<4>{}, expected, actual).wait();
+                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<4>{}, supported).wait();
                 }
                 if(size == 8)
                 {
-                    launch_kernel<8>(queue, sycl::nd_range<1>(1, 1), do_some_work<8>{}, expected, actual).wait();
+                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<8>{}, supported).wait();
                 }
                 if(size == 16)
                 {
-                    launch_kernel<16>(queue, sycl::nd_range<1>(1, 1), do_some_work<16>{}, expected, actual).wait();
+                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<16>{}, supported).wait();
                 }
                 if(size == 32)
                 {
-                    launch_kernel<32>(queue, sycl::nd_range<1>(1, 1), do_some_work<32>{}, expected, actual).wait();
+                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<32>{}, supported).wait();
                 }
                 if(size == 64)
                 {
-                    launch_kernel<64>(queue, sycl::nd_range<1>(1, 1), do_some_work<64>{}, expected, actual).wait();
+                    launch_kernel(queue, sycl::nd_range<1>(1, 1), do_some_work<64>{}, supported).wait();
                 }
 
-                if(*actual)
-                {
-                    std::cout << "    the expected sub-group size is " << *expected << '\n';
-                    std::cout << "    the actual sub-group size is " << *actual << '\n';
-                }
-                else
+                if(not *supported)
                 {
                     std::cout << "    unsupported sub-group size\n";
                 }
             }
 
-            sycl::free(expected, queue);
-            sycl::free(actual, queue);
+            sycl::free(supported, queue);
+            sycl::free(subgroups, queue);
         }
         std::cout << '\n';
     }
