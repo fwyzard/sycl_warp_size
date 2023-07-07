@@ -32,33 +32,23 @@ int main()
                         {
                             cgh.parallel_for(
                                 sycl::nd_range<1>(1, 1),
-                                [=](sycl::nd_item<1> item)
+                                [supported, subgroups](sycl::nd_item<1> item)
                                 {
                                     *supported = true;
 #if(SYCL_SUBGROUP_SIZE & 4)
                                     subgroups[4] = true;
-#else
-                                    subgroups[4] = false;
 #endif
 #if(SYCL_SUBGROUP_SIZE & 8)
                                     subgroups[8] = true;
-#else
-                                    subgroups[8] = false;
 #endif
 #if(SYCL_SUBGROUP_SIZE & 16)
                                     subgroups[16] = true;
-#else
-                                    subgroups[16] = false;
 #endif
 #if(SYCL_SUBGROUP_SIZE & 32)
                                     subgroups[32] = true;
-#else
-                                    subgroups[32] = false;
 #endif
 #if(SYCL_SUBGROUP_SIZE & 64)
                                     subgroups[64] = true;
-#else
-                                    subgroups[64] = false;
 #endif
                                 });
                         })
