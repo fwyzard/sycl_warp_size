@@ -14,72 +14,153 @@ struct do_some_work
 };
 
 
-#if(SYCL_SUBGROUP_SIZE & 4)
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_4 [[intel::reqd_sub_group_size(4)]]
+template<int S, int D, typename F, typename... Args>
+sycl::event launch_kernel(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... args)
+{
+  // Note: S will be determined as a trait of F
+
+  if constexpr(S == 0) {
+    // no explicit subgroup size requirement
+    return queue.submit([&](sycl::handler& cgh) {
+        cgh.parallel_for(
+            range,
+            [f, args...](sycl::nd_item<D> item) {
+                        f(item, args...);
+            });
+    });
+  } else {
+#if (SYCL_SUBGROUP_SIZE == 0)
+    // no explicit SYCL target, assume JIT compilation
+    return queue.submit([&](sycl::handler& cgh) {
+        cgh.parallel_for(
+            range,
+            [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(S)]] {
+                        f(item, args...);
+            });
+    });
 #else
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_4
-#endif
-
-#if(SYCL_SUBGROUP_SIZE & 8)
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_8 [[intel::reqd_sub_group_size(8)]]
-#else
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_8
-#endif
-
-#if(SYCL_SUBGROUP_SIZE & 16)
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_16 [[intel::reqd_sub_group_size(16)]]
-#else
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_16
-#endif
-
-#if(SYCL_SUBGROUP_SIZE & 32)
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_32 [[intel::reqd_sub_group_size(32)]]
-#else
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_32
-#endif
-
-#if(SYCL_SUBGROUP_SIZE & 64)
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_64 [[intel::reqd_sub_group_size(64)]]
-#else
-#    define SYCL_REQUIRED_SUBGROUP_SIZE_64
-#endif
-
-#define SYCL_REQUIRED_SUBGROUP_SIZE_0
-
-
-#define LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(VALUE, SIZE)                                                           \
-    if constexpr(VALUE == SIZE)                                                                                       \
-    {                                                                                                                 \
-        queue                                                                                                         \
-            .submit(                                                                                                  \
-                [&](sycl::handler& cgh)                                                                               \
-                {                                                                                                     \
-                    cgh.parallel_for(                                                                                 \
-                        sycl::nd_range<1>(blocks * threads, threads),                                                 \
-                        [f, args...](sycl::nd_item<1> item)                                                           \
-                            SYCL_REQUIRED_SUBGROUP_SIZE_##SIZE { f(item, args...); });                                \
-                })                                                                                                    \
-            .wait();                                                                                                  \
+    // check if the kernel should be launched with a subgroup size of 4
+    if constexpr(S == 4) {
+#  if (SYCL_SUBGROUP_SIZE & 4)
+      // launch the kernel with a subgroup size of 4
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(S)]] {
+                          f(item, args...);
+              });
+      });
+#  else
+      // this subgroup size is not support, raise an exception
+      throw sycl::errc::kernel_not_supported;
+      // empty kernel, required to keep SYCL happy
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) {
+              });
+      });
+#  endif
     }
 
-template<std::size_t S, typename F, typename... Args>
-void launch_kernel(sycl::queue queue, F&& f, Args&&... args)
-{
-    constexpr const auto size = S;
-    int threads = 1;
-    int blocks = 1;
+    // check if the kernel should be launched with a subgroup size of 8
+    if constexpr(S == 8) {
+#  if (SYCL_SUBGROUP_SIZE & 8)
+      // launch the kernel with a subgroup size of 8
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(S)]] {
+                          f(item, args...);
+              });
+      });
+#  else
+      // this subgroup size is not support, raise an exception
+      throw sycl::errc::kernel_not_supported;
+      // empty kernel, required to keep SYCL happy
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) {
+              });
+      });
+#  endif
+    }
 
-    LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(size, 4)
-      else
-    LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(size, 8)
-      else
-    LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(size, 16)
-      else
-    LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(size, 32)
-      else
-    LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(size, 64)
-      else
-    LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS(size, 0)  // does not require any subgroup size
+    // check if the kernel should be launched with a subgroup size of 16
+    if constexpr(S == 16) {
+#  if (SYCL_SUBGROUP_SIZE & 16)
+      // launch the kernel with a subgroup size of 16
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(S)]] {
+                          f(item, args...);
+              });
+      });
+#  else
+      // this subgroup size is not support, raise an exception
+      throw sycl::errc::kernel_not_supported;
+      // empty kernel, required to keep SYCL happy
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) {
+              });
+      });
+#  endif
+    }
+
+    // check if the kernel should be launched with a subgroup size of 32
+    if constexpr(S == 32) {
+#  if (SYCL_SUBGROUP_SIZE & 32)
+      // launch the kernel with a subgroup size of 32
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(S)]] {
+                          f(item, args...);
+              });
+      });
+#  else
+      // this subgroup size is not support, raise an exception
+      throw sycl::errc::kernel_not_supported;
+      // empty kernel, required to keep SYCL happy
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) {
+              });
+      });
+#  endif
+    }
+
+    // check if the kernel should be launched with a subgroup size of 64
+    if constexpr(S == 64) {
+#  if (SYCL_SUBGROUP_SIZE & 64)
+      // launch the kernel with a subgroup size of 64
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(S)]] {
+                          f(item, args...);
+              });
+      });
+#  else
+      // this subgroup size is not support, raise an exception
+      throw sycl::errc::kernel_not_supported;
+      // empty kernel, required to keep SYCL happy
+      return queue.submit([&](sycl::handler& cgh) {
+          cgh.parallel_for(
+              range,
+              [f, args...](sycl::nd_item<D> item) {
+              });
+      });
+#  endif
+    }
+#endif
+
+    // this subgroup size is not support, raise an exception
+    throw sycl::errc::kernel_not_supported;
+  }
 }
-
-#undef LAUNCH_SYCL_KERNEL_IF_SUBGROUP_SIZE_IS
