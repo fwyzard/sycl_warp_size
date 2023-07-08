@@ -91,7 +91,7 @@ int main()
             }
             std::cout << '\n';
 
-            std::cout << "\n    test automatic sub-group size\n";
+            std::cout << "\n    test automatic sub-group size:\n";
             launch(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, supported).wait();
             //std::cout << "    the automatic sub-group size is " << *actual << '\n';
 
@@ -99,7 +99,7 @@ int main()
             {
                 *supported = false;
 
-                std::cout << "\n    test sub-group of " << size << " elements\n";
+                std::cout << "\n    test sub-group of " << size << " elements:\n";
                 if(size == 4)
                 {
                     launch(queue, sycl::nd_range<1>(1, 1), do_some_work<4>{}, supported).wait();

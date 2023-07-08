@@ -10,8 +10,12 @@ struct do_some_work
 {
     void operator()(sycl::nd_item<1> item, bool* supported) const
     {
-        printf("    the expected sub-group size is %d\n", S);
-        printf("    the actual sub-group size is %d\n", item.get_sub_group().get_max_local_range()[0]);
+        if constexpr (S == 0) {
+            printf("      the automatic sub-group size is %d\n", item.get_sub_group().get_max_local_range()[0]);
+        } else {
+            printf("      the expected sub-group size is %d\n", S);
+            printf("      the actual sub-group size is %d\n", item.get_sub_group().get_max_local_range()[0]);
+        }
         *supported = true;
     }
 };
