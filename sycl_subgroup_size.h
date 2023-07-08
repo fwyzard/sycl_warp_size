@@ -24,15 +24,15 @@
         defined(__SYCL_TARGET_INTEL_GPU_ACM_G11__) || /* Alchemist G11 Intel graphics architecture */                 \
         defined(__SYCL_TARGET_INTEL_GPU_ACM_G12__) /* Alchemist G12 Intel graphics architecture */
 
-#        define SYCL_SUBGROUP_SIZE (8 | 16 | 32)
+#        define SYCL_SUBGROUP_SIZE (8U | 16U | 32U)
 
 #    elif defined(__SYCL_TARGET_INTEL_GPU_PVC__) /* Ponte Vecchio Intel graphics architecture */
 
-#        define SYCL_SUBGROUP_SIZE (16 | 32)
+#        define SYCL_SUBGROUP_SIZE (16U | 32U)
 
 #    elif defined(__SYCL_TARGET_INTEL_X86_64__) /* generate code ahead of time for x86_64 CPUs */
 
-#        define SYCL_SUBGROUP_SIZE (4 | 8 | 16 | 32 | 64)
+#        define SYCL_SUBGROUP_SIZE (4U | 8U | 16U | 32U | 64U)
 
 #    elif defined(__SYCL_TARGET_NVIDIA_GPU_SM_50__) || /* NVIDIA Maxwell architecture (compute capability 5.0) */     \
         defined(__SYCL_TARGET_NVIDIA_GPU_SM_52__) || /* NVIDIA Maxwell architecture (compute capability 5.2) */       \
@@ -49,7 +49,7 @@
         defined(__SYCL_TARGET_NVIDIA_GPU_SM_89__) || /* NVIDIA Ada Lovelace architecture (compute capability 8.9) */  \
         defined(__SYCL_TARGET_NVIDIA_GPU_SM_90__) /* NVIDIA Hopper architecture (compute capability 9.0) */
 
-#        define SYCL_SUBGROUP_SIZE (32)
+#        define SYCL_SUBGROUP_SIZE (32U)
 
 #    elif defined(__SYCL_TARGET_AMD_GPU_GFX700__) || /* AMD GCN 2.0 Sea Islands architecture (gfx 7.0) */             \
         defined(__SYCL_TARGET_AMD_GPU_GFX701__) || /* AMD GCN 2.0 Sea Islands architecture (gfx 7.0) */               \
@@ -66,7 +66,7 @@
         defined(__SYCL_TARGET_AMD_GPU_GFX908__) || /* AMD CDNA 1.0 Arcturus architecture (gfx 9.0) */                 \
         defined(__SYCL_TARGET_AMD_GPU_GFX90A__) /* AMD CDNA 2.0 Aldebaran architecture (gfx 9.0) */
 
-#        define SYCL_SUBGROUP_SIZE (64)
+#        define SYCL_SUBGROUP_SIZE (64U)
 
 #    elif defined(__SYCL_TARGET_AMD_GPU_GFX1010__) || /* AMD RDNA 1.0 Navi 10 architecture (gfx 10.1) */              \
         defined(__SYCL_TARGET_AMD_GPU_GFX1011__) || /* AMD RDNA 1.0 Navi 12 architecture (gfx 10.1) */                \
@@ -77,11 +77,11 @@
         defined(__SYCL_TARGET_AMD_GPU_GFX1032__) || /* AMD RDNA 2.0 Navi 23 architecture (gfx 10.3) */                \
         defined(__SYCL_TARGET_AMD_GPU_GFX1034__) /* AMD RDNA 2.0 Navi 24 architecture (gfx 10.3) */
 
-#        define SYCL_SUBGROUP_SIZE (32 | 64)
+#        define SYCL_SUBGROUP_SIZE (32U | 64U)
 
-#    else // __SYCL_TARGET_*
+#    else /* unknown target or JIT */
 
-#        define SYCL_SUBGROUP_SIZE (0) /* unknown target */
+#        define SYCL_SUBGROUP_SIZE (0U)
 
 #    endif // __SYCL_TARGET_*
 

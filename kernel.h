@@ -5,7 +5,7 @@
 
 #include <sycl/sycl.hpp>
 
-template<std::size_t S>
+template<uint32_t S>
 struct do_some_work
 {
     void operator()(sycl::nd_item<1> item, bool* supported) const
@@ -23,8 +23,8 @@ struct do_some_work
     }
 };
 
-template<std::size_t S>
+template<uint32_t S>
 struct traits::RequiredSubGroupSize<do_some_work<S>>
 {
-    static constexpr std::size_t value = S;
+    static constexpr uint32_t value = S;
 };

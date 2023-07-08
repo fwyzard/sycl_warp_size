@@ -10,18 +10,18 @@ namespace traits
     template<typename T>
     struct RequiredSubGroupSize
     {
-        static constexpr std::size_t value = 0;
+        static constexpr uint32_t value = 0;
     };
 
     template<typename T>
-    constexpr std::size_t required_sub_group_size = RequiredSubGroupSize<T>::value;
+    constexpr uint32_t required_sub_group_size = RequiredSubGroupSize<T>::value;
 
 } // namespace traits
 
 template<int D, typename F, typename... Args>
 sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... args)
 {
-    constexpr std::size_t sub_group_size = traits::required_sub_group_size<F>;
+    constexpr uint32_t sub_group_size = traits::required_sub_group_size<F>;
 
     if constexpr(sub_group_size == 0)
     {
@@ -56,7 +56,7 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                         { f(item, args...); });
                 });
 #    else
-            // this subgroup size is not support, raise an exception
+            // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
             return queue.submit([&](sycl::handler& cgh)
@@ -78,7 +78,7 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                         { f(item, args...); });
                 });
 #    else
-            // this subgroup size is not support, raise an exception
+            // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
             return queue.submit([&](sycl::handler& cgh)
@@ -100,7 +100,7 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                         { f(item, args...); });
                 });
 #    else
-            // this subgroup size is not support, raise an exception
+            // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
             return queue.submit([&](sycl::handler& cgh)
@@ -122,7 +122,7 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                         { f(item, args...); });
                 });
 #    else
-            // this subgroup size is not support, raise an exception
+            // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
             return queue.submit([&](sycl::handler& cgh)
@@ -144,7 +144,7 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                         { f(item, args...); });
                 });
 #    else
-            // this subgroup size is not support, raise an exception
+            // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
             return queue.submit([&](sycl::handler& cgh)
@@ -153,7 +153,7 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
         }
 #endif
 
-        // this subgroup size is not support, raise an exception
+        // this subgroup size is not supported, raise an exception
         throw sycl::errc::kernel_not_supported;
     }
 }

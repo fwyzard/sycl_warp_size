@@ -56,18 +56,18 @@ int main()
             else
             {
                 std::cout << "  sub-group sizes supported by the compiler: ";
-                bool first = true;
-                for(uint32_t size = 1; size; size <<= 1)
-                    if(*subgroups & size)
-                    {
-                        if(not first)
-                            std::cout << ", ";
-                        std::cout << size;
-                        first = false;
-                    }
-                if(first)
-                {
+                if (*subgroups == 0U) {
                     std::cout << "(undefined)";
+                } else {
+                    bool first = true;
+                    for(uint32_t size = 1; size; size <<= 1)
+                        if(*subgroups & size)
+                        {
+                            if(not first)
+                                std::cout << ", ";
+                            std::cout << size;
+                            first = false;
+                        }
                 }
                 std::cout << '\n';
             }
