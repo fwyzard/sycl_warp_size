@@ -1,10 +1,10 @@
-#include <iostream>
-
-#include <sycl/sycl.hpp>
-
 #include "kernel.h"
 #include "launch.h"
 #include "sycl_subgroup_size.h"
+
+#include <sycl/sycl.hpp>
+
+#include <iostream>
 
 int main()
 {

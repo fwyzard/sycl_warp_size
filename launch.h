@@ -4,17 +4,19 @@
 
 #include <sycl/sycl.hpp>
 
-namespace traits {
+namespace traits
+{
 
-template <typename T>
-struct RequiredSubGroupSize {
-  static constexpr std::size_t value = 0;
-};
+    template<typename T>
+    struct RequiredSubGroupSize
+    {
+        static constexpr std::size_t value = 0;
+    };
 
-template <typename T>
-constexpr std::size_t required_sub_group_size = RequiredSubGroupSize<T>::value;
+    template<typename T>
+    constexpr std::size_t required_sub_group_size = RequiredSubGroupSize<T>::value;
 
-}
+} // namespace traits
 
 template<int D, typename F, typename... Args>
 sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... args)
@@ -36,7 +38,8 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
             {
                 cgh.parallel_for(
                     range,
-                    [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]] { f(item, args...); });
+                    [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
+                    { f(item, args...); });
             });
 #else
         // check if the kernel should be launched with a subgroup size of 4
@@ -49,7 +52,8 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                 {
                     cgh.parallel_for(
                         range,
-                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]] { f(item, args...); });
+                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
+                        { f(item, args...); });
                 });
 #    else
             // this subgroup size is not support, raise an exception
@@ -70,7 +74,8 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                 {
                     cgh.parallel_for(
                         range,
-                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]] { f(item, args...); });
+                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
+                        { f(item, args...); });
                 });
 #    else
             // this subgroup size is not support, raise an exception
@@ -91,7 +96,8 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                 {
                     cgh.parallel_for(
                         range,
-                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]] { f(item, args...); });
+                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
+                        { f(item, args...); });
                 });
 #    else
             // this subgroup size is not support, raise an exception
@@ -112,7 +118,8 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                 {
                     cgh.parallel_for(
                         range,
-                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]] { f(item, args...); });
+                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
+                        { f(item, args...); });
                 });
 #    else
             // this subgroup size is not support, raise an exception
@@ -133,7 +140,8 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                 {
                     cgh.parallel_for(
                         range,
-                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]] { f(item, args...); });
+                        [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
+                        { f(item, args...); });
                 });
 #    else
             // this subgroup size is not support, raise an exception
