@@ -26,8 +26,17 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
     if constexpr(sub_group_size == 0)
     {
         // no explicit subgroup size requirement
-        return queue.submit([&](sycl::handler& cgh)
-                            { cgh.parallel_for(range, [f, args...](sycl::nd_item<D> item) { f(item, args...); }); });
+        return queue.submit(
+            [&](sycl::handler& cgh)
+            {
+                cgh.parallel_for(
+                    range,
+                    [f, args...](sycl::nd_item<D> item)
+                    {
+                        // call the user kernel function with the SYCL item and the user arguments
+                        f(item, args...);
+                    });
+            });
     }
     else
     {
@@ -39,7 +48,10 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                 cgh.parallel_for(
                     range,
                     [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
-                    { f(item, args...); });
+                    {
+                        // call the user kernel function with the SYCL item and the user arguments
+                        f(item, args...);
+                    });
             });
 #else
         // check if the kernel should be launched with a subgroup size of 4
@@ -53,14 +65,27 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                     cgh.parallel_for(
                         range,
                         [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
-                        { f(item, args...); });
+                        {
+                            // call the user kernel function with the SYCL item and the user arguments
+                            f(item, args...);
+                        });
                 });
 #    else
             // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
-            return queue.submit([&](sycl::handler& cgh)
-                                { cgh.parallel_for(range, [f, args...](sycl::nd_item<D> item) {}); });
+            return queue.submit(
+                [&](sycl::handler& cgh)
+                {
+                    cgh.parallel_for(
+                        range,
+                        [f, args...](sycl::nd_item<D> item)
+                        {
+                            // [[maybe_unused]] is not allowed in a lambda capture
+                            (void) f;
+                            (void) (args, ...);
+                        });
+                });
 #    endif
         }
 
@@ -75,14 +100,27 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                     cgh.parallel_for(
                         range,
                         [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
-                        { f(item, args...); });
+                        {
+                            // call the user kernel function with the SYCL item and the user arguments
+                            f(item, args...);
+                        });
                 });
 #    else
             // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
-            return queue.submit([&](sycl::handler& cgh)
-                                { cgh.parallel_for(range, [f, args...](sycl::nd_item<D> item) {}); });
+            return queue.submit(
+                [&](sycl::handler& cgh)
+                {
+                    cgh.parallel_for(
+                        range,
+                        [f, args...](sycl::nd_item<D> item)
+                        {
+                            // [[maybe_unused]] is not allowed in a lambda capture
+                            (void) f;
+                            (void) (args, ...);
+                        });
+                });
 #    endif
         }
 
@@ -97,14 +135,27 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                     cgh.parallel_for(
                         range,
                         [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
-                        { f(item, args...); });
+                        {
+                            // call the user kernel function with the SYCL item and the user arguments
+                            f(item, args...);
+                        });
                 });
 #    else
             // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
-            return queue.submit([&](sycl::handler& cgh)
-                                { cgh.parallel_for(range, [f, args...](sycl::nd_item<D> item) {}); });
+            return queue.submit(
+                [&](sycl::handler& cgh)
+                {
+                    cgh.parallel_for(
+                        range,
+                        [f, args...](sycl::nd_item<D> item)
+                        {
+                            // [[maybe_unused]] is not allowed in a lambda capture
+                            (void) f;
+                            (void) (args, ...);
+                        });
+                });
 #    endif
         }
 
@@ -119,14 +170,27 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                     cgh.parallel_for(
                         range,
                         [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
-                        { f(item, args...); });
+                        {
+                            // call the user kernel function with the SYCL item and the user arguments
+                            f(item, args...);
+                        });
                 });
 #    else
             // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
-            return queue.submit([&](sycl::handler& cgh)
-                                { cgh.parallel_for(range, [f, args...](sycl::nd_item<D> item) {}); });
+            return queue.submit(
+                [&](sycl::handler& cgh)
+                {
+                    cgh.parallel_for(
+                        range,
+                        [f, args...](sycl::nd_item<D> item)
+                        {
+                            // [[maybe_unused]] is not allowed in a lambda capture
+                            (void) f;
+                            (void) (args, ...);
+                        });
+                });
 #    endif
         }
 
@@ -141,14 +205,27 @@ sycl::event launch(sycl::queue queue, sycl::nd_range<D> range, F&& f, Args&&... 
                     cgh.parallel_for(
                         range,
                         [f, args...](sycl::nd_item<D> item) [[intel::reqd_sub_group_size(sub_group_size)]]
-                        { f(item, args...); });
+                        {
+                            // call the user kernel function with the SYCL item and the user arguments
+                            f(item, args...);
+                        });
                 });
 #    else
             // this subgroup size is not supported, raise an exception
             throw sycl::errc::kernel_not_supported;
             // empty kernel, required to keep SYCL happy
-            return queue.submit([&](sycl::handler& cgh)
-                                { cgh.parallel_for(range, [f, args...](sycl::nd_item<D> item) {}); });
+            return queue.submit(
+                [&](sycl::handler& cgh)
+                {
+                    cgh.parallel_for(
+                        range,
+                        [f, args...](sycl::nd_item<D> item)
+                        {
+                            // [[maybe_unused]] is not allowed in a lambda capture
+                            (void) f;
+                            (void) (args, ...);
+                        });
+                });
 #    endif
         }
 #endif
