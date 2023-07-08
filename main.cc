@@ -21,10 +21,9 @@ int main()
 
             std::cout << "  SYCL device: " << device.get_info<sycl::info::device::name>() << '\n';
             bool* supported = sycl::malloc_host<bool>(1, queue);
-            bool* subgroups = sycl::malloc_host<bool>(65, queue);
+            uint32_t* subgroups = sycl::malloc_host<uint32_t>(1, queue);
             *supported = false;
-            for(int i = 0; i < 65; ++i)
-                subgroups[i] = false;
+            *subgroups = 0;
             try
             {
                 queue
@@ -35,22 +34,12 @@ int main()
                                 sycl::nd_range<1>(1, 1),
                                 [supported, subgroups](sycl::nd_item<1> item)
                                 {
+#ifdef SYCL_SUBGROUP_SIZE
+                                    *subgroups = SYCL_SUBGROUP_SIZE;
+#else
+                                    *subgroups = 0;
+#endif
                                     *supported = true;
-#if(SYCL_SUBGROUP_SIZE & 4)
-                                    subgroups[4] = true;
-#endif
-#if(SYCL_SUBGROUP_SIZE & 8)
-                                    subgroups[8] = true;
-#endif
-#if(SYCL_SUBGROUP_SIZE & 16)
-                                    subgroups[16] = true;
-#endif
-#if(SYCL_SUBGROUP_SIZE & 32)
-                                    subgroups[32] = true;
-#endif
-#if(SYCL_SUBGROUP_SIZE & 64)
-                                    subgroups[64] = true;
-#endif
                                 });
                         })
                     .wait();
@@ -68,12 +57,12 @@ int main()
             {
                 std::cout << "  sub-group sizes supported by the compiler: ";
                 bool first = true;
-                for(int i = 0; i < 65; ++i)
-                    if(subgroups[i])
+                for(uint32_t size = 1; size; size <<= 1)
+                    if(*subgroups & size)
                     {
                         if(not first)
                             std::cout << ", ";
-                        std::cout << i;
+                        std::cout << size;
                         first = false;
                     }
                 if(first)
@@ -93,7 +82,6 @@ int main()
 
             std::cout << "\n    test automatic sub-group size:\n";
             launch(queue, sycl::nd_range<1>(1, 1), do_some_work<0>{}, supported).wait();
-            //std::cout << "    the automatic sub-group size is " << *actual << '\n';
 
             for(int size : sizes)
             {
